@@ -20,10 +20,7 @@ const server = http.createServer(app);
 // Setup Socket.IO with CORS
 const io = socketIo(server, {
   cors: {
-    origin: [
-      "http://localhost:3000",
-      "https://687aae4769f98d6dc0922f0b--leaderboard1627.netlify.app"
-    ],
+    origin: "*",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -32,10 +29,7 @@ const io = socketIo(server, {
 // Middleware
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://687aae4769f98d6dc0922f0b--leaderboard1627.netlify.app"
-    ],
+    origin: "*",
     credentials: true,
   })
 );
