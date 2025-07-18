@@ -1,0 +1,9 @@
+@echo off
+echo Starting Leaderboard Frontend...
+echo.
+cd frontend
+echo Installing dependencies...
+npm install
+echo.
+echo Starting React development server...
+npm start
