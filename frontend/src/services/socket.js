@@ -16,7 +16,7 @@ class SocketService {
     }
 
     this.socket = io(
-      process.env.REACT_APP_SOCKET_URL || "http://localhost:5000",
+      process.env.REACT_APP_BACKEND_URL,
       {
         transports: ["websocket", "polling"],
         timeout: 20000,
