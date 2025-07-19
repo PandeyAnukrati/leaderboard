@@ -6,6 +6,7 @@ import {
   TrendingUp,
   ChevronLeft,
   ChevronRight,
+  Award,
 } from "lucide-react";
 import { userService } from "../services/api";
 
@@ -96,102 +97,112 @@ const PointHistory = () => {
   }
 
   return (
-    <div className="card">
+    <div className="card point-history-redesign">
       <div className="d-flex align-items-center justify-content-between mb-4">
-        <h3 className="mb-0">
-          <History className="inline mr-2" size={24} />
+        <h2 className="mb-0" style={{ fontWeight: "bold", letterSpacing: 1 }}>
+          <History className="inline mr-2" size={32} />
           Point History
-        </h3>
-        <div className="text-muted">
+        </h2>
+        <div className="text-muted" style={{ fontSize: "18px" }}>
           {pagination?.totalHistory || 0} total claims
         </div>
       </div>
 
       {history.length === 0 ? (
         <div className="text-center py-4">
-          <History size={48} className="text-muted mb-3" />
-          <p className="text-muted">
+          <History size={64} className="text-muted mb-3" />
+          <p className="text-muted" style={{ fontSize: "20px" }}>
             No point claims yet. Start claiming points to see history!
           </p>
         </div>
       ) : (
         <>
-          {/* History List */}
-          <div className="history-list">
+          {/* Timeline History List */}
+          <div className="history-timeline">
             {history.map((claim, index) => {
               const { date, time } = formatDate(claim.claimedAt);
-
               return (
                 <div
                   key={claim._id}
-                  className="history-item fade-in"
+                  className="timeline-item fade-in"
                   style={{
-                    padding: "16px",
-                    marginBottom: "12px",
+                    position: "relative",
+                    padding: "24px 16px 24px 48px",
+                    marginBottom: "18px",
                     backgroundColor: "#f8f9fa",
-                    borderRadius: "12px",
+                    borderRadius: "16px",
                     border: "1px solid #e9ecef",
-                    transition: "all 0.2s ease",
-                    animationDelay: `${index * 0.05}s`,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = "#e9ecef";
-                    e.target.style.transform = "translateY(-1px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = "#f8f9fa";
-                    e.target.style.transform = "translateY(0)";
+                    boxShadow: "0 2px 12px #e3f2fd80",
+                    transition: "all 0.3s cubic-bezier(.4,2,.3,1)",
+                    animationDelay: `${index * 0.07}s`,
                   }}
                 >
+                  {/* Timeline Dot */}
+                  <span style={{
+                    position: "absolute",
+                    left: "24px",
+                    top: "32px",
+                    width: "12px",
+                    height: "12px",
+                    background: getPointsColor(claim.pointsAwarded),
+                    borderRadius: "50%",
+                    boxShadow: "0 0 8px #1976d2a0",
+                    border: "2px solid #fff"
+                  }}></span>
                   <div className="d-flex align-items-center justify-content-between">
                     {/* User and Points Info */}
                     <div className="d-flex align-items-center gap-3">
+                      {/* Animated Points Badge */}
                       <div
-                        className="points-badge"
+                        className="points-badge pulse"
                         style={{
                           backgroundColor: getPointsColor(claim.pointsAwarded),
                           color: "white",
                           borderRadius: "50%",
-                          width: "40px",
-                          height: "40px",
+                          width: "48px",
+                          height: "48px",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
                           fontWeight: "bold",
-                          fontSize: "14px",
+                          fontSize: "16px",
+                          boxShadow: "0 2px 8px #1976d2a0",
+                          marginRight: "8px"
                         }}
                       >
                         +{claim.pointsAwarded}
                       </div>
-
+                      {/* User Avatar (if available) */}
+                      {claim.userImage && (
+                        <img src={claim.userImage} alt={claim.userName} style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover", marginRight: "8px", border: "2px solid #1976d2" }} />
+                      )}
                       <div>
                         <div className="d-flex align-items-center gap-2 mb-1">
                           <User size={16} className="text-muted" />
-                          <span style={{ fontWeight: "600", fontSize: "16px" }}>
+                          <span style={{ fontWeight: "600", fontSize: "17px" }}>
                             {claim.userName}
                           </span>
                         </div>
                         <div
                           className="d-flex align-items-center gap-2 text-muted"
-                          style={{ fontSize: "14px" }}
+                          style={{ fontSize: "15px" }}
                         >
-                          <TrendingUp size={14} />
+                          <TrendingUp size={15} />
                           <span>
                             {claim.previousTotal} → {claim.newTotal} points
                           </span>
                         </div>
                       </div>
                     </div>
-
                     {/* Date and Time */}
                     <div className="text-right">
                       <div className="d-flex align-items-center gap-2 mb-1">
-                        <Clock size={14} className="text-muted" />
-                        <span style={{ fontSize: "14px", fontWeight: "500" }}>
+                        <Clock size={15} className="text-muted" />
+                        <span style={{ fontSize: "15px", fontWeight: "500" }}>
                           {time}
                         </span>
                       </div>
-                      <div className="text-muted" style={{ fontSize: "12px" }}>
+                      <div className="text-muted" style={{ fontSize: "13px" }}>
                         {date}
                       </div>
                     </div>
@@ -212,13 +223,11 @@ const PointHistory = () => {
                 <ChevronLeft size={16} />
                 Previous
               </button>
-
               <div className="d-flex align-items-center gap-2">
                 <span className="text-muted">
                   Page {pagination.currentPage} of {pagination.totalPages}
                 </span>
               </div>
-
               <button
                 className="btn btn-secondary"
                 onClick={() => handlePageChange(currentPage + 1)}
@@ -230,61 +239,23 @@ const PointHistory = () => {
             </div>
           )}
 
-          {/* Summary Stats */}
-          <div
-            className="mt-4 p-3"
-            style={{ backgroundColor: "#e3f2fd", borderRadius: "8px" }}
-          >
-            <h5 className="mb-2">📊 Quick Stats</h5>
-            <div className="d-flex justify-content-around text-center">
-              <div>
-                <div
-                  style={{
-                    fontSize: "20px",
-                    fontWeight: "bold",
-                    color: "#1976d2",
-                  }}
-                >
-                  {pagination?.totalHistory || 0}
-                </div>
-                <div style={{ fontSize: "12px", color: "#666" }}>
-                  Total Claims
-                </div>
+          {/* Visually Appealing Quick Stats */}
+          <div className="quick-stats" style={{ marginBottom: "32px", marginTop: "16px" }}>
+            <div style={{ display: "flex", justifyContent: "center", gap: "32px" }}>
+              <div style={{ background: "linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)", borderRadius: "16px", boxShadow: "0 2px 12px #bbdefb80", padding: "18px 28px", textAlign: "center", minWidth: "120px" }}>
+                <History size={28} style={{ color: "#1976d2", marginBottom: "6px" }} />
+                <div style={{ fontWeight: "bold", fontSize: "22px", color: "#1976d2" }}>{pagination?.totalHistory || 0}</div>
+                <div style={{ fontSize: "13px", color: "#1976d2" }}>Total Claims</div>
               </div>
-              <div>
-                <div
-                  style={{
-                    fontSize: "20px",
-                    fontWeight: "bold",
-                    color: "#388e3c",
-                  }}
-                >
-                  {history.reduce((sum, claim) => sum + claim.pointsAwarded, 0)}
-                </div>
-                <div style={{ fontSize: "12px", color: "#666" }}>
-                  Points This Page
-                </div>
+              <div style={{ background: "linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)", borderRadius: "16px", boxShadow: "0 2px 12px #c8e6c980", padding: "18px 28px", textAlign: "center", minWidth: "120px" }}>
+                <Award size={28} style={{ color: "#388e3c", marginBottom: "6px" }} />
+                <div style={{ fontWeight: "bold", fontSize: "22px", color: "#388e3c" }}>{history.reduce((sum, claim) => sum + claim.pointsAwarded, 0)}</div>
+                <div style={{ fontSize: "13px", color: "#388e3c" }}>Points This Page</div>
               </div>
-              <div>
-                <div
-                  style={{
-                    fontSize: "20px",
-                    fontWeight: "bold",
-                    color: "#f57c00",
-                  }}
-                >
-                  {history.length > 0
-                    ? Math.round(
-                        history.reduce(
-                          (sum, claim) => sum + claim.pointsAwarded,
-                          0
-                        ) / history.length
-                      )
-                    : 0}
-                </div>
-                <div style={{ fontSize: "12px", color: "#666" }}>
-                  Avg Points
-                </div>
+              <div style={{ background: "linear-gradient(135deg, #fffde7 0%, #fff9c4 100%)", borderRadius: "16px", boxShadow: "0 2px 12px #fffde780", padding: "18px 28px", textAlign: "center", minWidth: "120px" }}>
+                <TrendingUp size={28} style={{ color: "#fbc02d", marginBottom: "6px" }} />
+                <div style={{ fontWeight: "bold", fontSize: "22px", color: "#fbc02d" }}>{history.length > 0 ? Math.round(history.reduce((sum, claim) => sum + claim.pointsAwarded, 0) / history.length) : 0}</div>
+                <div style={{ fontSize: "13px", color: "#fbc02d" }}>Avg Points</div>
               </div>
             </div>
           </div>

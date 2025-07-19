@@ -151,30 +151,117 @@ function App() {
   ];
 
   return (
-    <div className="App">
+    <div className="App" style={{ position: "relative", minHeight: "100vh", background: "linear-gradient(180deg, #181a20 0%, #232946 60%, #232946 100%)", marginTop: "-20px", marginBottom: "-20px" }}>
+      {/* Game-like Adventure Background with Reward Elements */}
+      <div style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        pointerEvents: "none",
+        zIndex: 0,
+        overflow: "hidden"
+      }}>
+        {/* Stars */}
+        {[...Array(40)].map((_, i) => {
+          const size = Math.random() * 12 + 8;
+          return (
+            <div
+              key={i}
+              style={{
+                position: "absolute",
+                top: `${Math.random() * 60 + 2}%`,
+                left: `${Math.random() * 100}%`,
+                width: `${size}px`,
+                height: `${size}px`,
+                background: "#fff",
+                borderRadius: "50%",
+                opacity: Math.random() * 0.6 + 0.3,
+                boxShadow: `0 0 ${size * 1.2}px #fff, 0 0 ${size * 2}px #fff2`,
+                animation: `twinkle ${Math.random() * 2 + 1.5}s infinite alternate`,
+              }}
+            />
+          );
+        })}
+        {/* Reward SVGs: Trophy, Medal, Crown, Star */}
+        <svg width="100%" height="100%" style={{ position: "absolute", top: 0, left: 0, zIndex: 0, pointerEvents: "none" }}>
+          {/* Trophy */}
+          <g opacity="0.18">
+            <circle cx="90" cy="120" r="38" fill="#ffd700" />
+            <rect x="75" y="120" width="30" height="18" rx="8" fill="#bfa100" />
+            <rect x="82" y="138" width="16" height="10" rx="4" fill="#bfa100" />
+          </g>
+          {/* Medal */}
+          <g opacity="0.15">
+            <circle cx="320" cy="80" r="22" fill="#ff9800" />
+            <rect x="312" y="60" width="16" height="12" rx="4" fill="#bfa100" />
+          </g>
+          {/* Crown */}
+          <g opacity="0.13">
+            <rect x="600" y="60" width="44" height="18" rx="8" fill="#ffd700" />
+            <polygon points="622,60 610,78 634,78" fill="#ffc107" />
+          </g>
+          {/* Star */}
+          <g opacity="0.12">
+            <polygon points="900,60 910,90 940,90 915,110 925,140 900,120 875,140 885,110 860,90 890,90" fill="#fffde4" />
+          </g>
+        </svg>
+        {/* Mountains - SVG layers for parallax effect */}
+        <svg width="100%" height="320" style={{ position: "absolute", bottom: 0, left: 0, zIndex: 1 }}>
+          <defs>
+            <linearGradient id="mountain1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#3a4767" />
+              <stop offset="100%" stopColor="#232946" />
+            </linearGradient>
+            <linearGradient id="mountain2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#5f6caf" />
+              <stop offset="100%" stopColor="#232946" />
+            </linearGradient>
+          </defs>
+          <path d="M0 220 Q 120 120 320 220 T 640 220 T 960 220 T 1280 220 V 320 H 0 Z" fill="url(#mountain1)" opacity="0.8" />
+          <path d="M0 260 Q 180 180 400 260 T 800 260 T 1200 260 T 1600 260 V 320 H 0 Z" fill="url(#mountain2)" opacity="0.7" />
+        </svg>
+        {/* Mist/Fog Layer */}
+        <div style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          width: "100%",
+          height: "120px",
+          background: "linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.05) 100%)",
+          zIndex: 2,
+          filter: "blur(2px)",
+        }} />
+        {/* Twinkle keyframes */}
+        <style>{`
+          @keyframes twinkle {
+            from { opacity: 0.3; }
+            to { opacity: 1; }
+          }
+        `}</style>
+      </div>
       {/* Connection Status */}
       <ConnectionStatus />
 
       {/* Header */}
-      <header className="container">
+      <header className="container" style={{ marginTop: 24, marginBottom: 24 }}>
         <div className="text-center mb-4">
           <h1
             className="mb-2"
-            style={{ fontSize: "2.5rem", fontWeight: "bold", color: "white" }}
+            style={{ fontSize: "2.5rem", fontWeight: "bold", color: "#ffd700", textShadow: "0 2px 8px #232946" }}
           >
             🏆 Dynamic Leaderboard System
           </h1>
           <p
-            className="text-white"
-            style={{ fontSize: "1.1rem", opacity: 0.9 }}
+            style={{ fontSize: "1.1rem", color: "#fff", opacity: 0.98, textShadow: "0 1px 6px #232946" }}
           >
             Select users, claim random points, and watch the rankings update in
             real-time!
           </p>
           {lastUpdate && (
             <p
-              className="text-white"
-              style={{ fontSize: "0.9rem", opacity: 0.7 }}
+              style={{ fontSize: "0.9rem", color: "#ffd700", opacity: 0.9, textShadow: "0 1px 6px #232946" }}
             >
               Last updated: {lastUpdate.toLocaleTimeString()}
             </p>
@@ -234,71 +321,105 @@ function App() {
         </div>
 
         {/* Stats Summary */}
-        <div className="card mt-4">
-          <h4 className="mb-3 text-center">📊 System Statistics</h4>
-          <div className="d-flex justify-content-around text-center">
-            <div>
-              <div className="d-flex align-items-center justify-content-center gap-2 mb-2">
-                <Users size={20} className="text-primary" />
-                <span
-                  style={{
-                    fontSize: "24px",
-                    fontWeight: "bold",
-                    color: "#667eea",
-                  }}
-                >
-                  {users.length}
-                </span>
-              </div>
-              <div style={{ fontSize: "14px", color: "#666" }}>Total Users</div>
+        <div className="card mt-4 stats-card-redesign" style={{
+          background: "linear-gradient(135deg, #232946 0%, #181a20 100%)",
+          boxShadow: "0 4px 32px #23294660",
+          borderRadius: "18px",
+          padding: "32px 24px",
+          position: "relative",
+          overflow: "hidden",
+        }}>
+          <h4 className="mb-4 text-center" style={{
+            fontWeight: "bold",
+            fontSize: "2rem",
+            color: "#ffd700",
+            letterSpacing: 1,
+            textShadow: "0 2px 8px #232946"
+          }}>📊 System Statistics</h4>
+          <div className="stats-grid" style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "32px",
+            alignItems: "center",
+            justifyItems: "center",
+            position: "relative"
+          }}>
+            {/* Total Users */}
+            <div style={{
+              background: "linear-gradient(120deg, #667eea 0%, #5f6caf 100%)",
+              borderRadius: "14px",
+              boxShadow: "0 2px 16px #667eea40",
+              padding: "24px 12px",
+              minWidth: "120px",
+              textAlign: "center",
+              position: "relative",
+              color: "#fff"
+            }}>
+              <Users size={32} className="mb-2" style={{ color: "#fff", filter: "drop-shadow(0 2px 8px #667eea80)" }} />
+              <div style={{ fontSize: "2.2rem", fontWeight: "bold", marginBottom: "6px", letterSpacing: 1 }}>{users.length}</div>
+              <div style={{ fontSize: "1rem", opacity: 0.85 }}>Total Users</div>
+              <div style={{ position: "absolute", top: 8, right: 12, opacity: 0.18, fontSize: "2.5rem" }}>👥</div>
             </div>
 
-            <div>
-              <div className="d-flex align-items-center justify-content-center gap-2 mb-2">
-                <Zap size={20} className="text-success" />
-                <span
-                  style={{
-                    fontSize: "24px",
-                    fontWeight: "bold",
-                    color: "#28a745",
-                  }}
-                >
-                  {users.reduce((sum, user) => sum + user.totalPoints, 0)}
-                </span>
-              </div>
-              <div style={{ fontSize: "14px", color: "#666" }}>
-                Total Points
-              </div>
+            {/* Total Points */}
+            <div style={{
+              background: "linear-gradient(120deg, #28a745 0%, #ffc107 100%)",
+              borderRadius: "14px",
+              boxShadow: "0 2px 16px #28a74540",
+              padding: "24px 12px",
+              minWidth: "120px",
+              textAlign: "center",
+              position: "relative",
+              color: "#fff"
+            }}>
+              <Zap size={32} className="mb-2" style={{ color: "#fff", filter: "drop-shadow(0 2px 8px #28a74580)" }} />
+              <div style={{ fontSize: "2.2rem", fontWeight: "bold", marginBottom: "6px", letterSpacing: 1 }}>{users.reduce((sum, user) => sum + user.totalPoints, 0)}</div>
+              <div style={{ fontSize: "1rem", opacity: 0.85 }}>Total Points</div>
+              <div style={{ position: "absolute", top: 8, right: 12, opacity: 0.18, fontSize: "2.5rem" }}>⚡</div>
             </div>
 
-            <div>
-              <div className="d-flex align-items-center justify-content-center gap-2 mb-2">
-                <Trophy size={20} className="text-warning" />
-                <span
-                  style={{
-                    fontSize: "24px",
-                    fontWeight: "bold",
-                    color: "#ffc107",
-                  }}
-                >
-                  {users.length > 0 ? users[0]?.name || "N/A" : "N/A"}
-                </span>
-              </div>
-              <div style={{ fontSize: "14px", color: "#666" }}>
-                Current Leader
-              </div>
+            {/* Current Leader */}
+            <div style={{
+              background: "linear-gradient(120deg, #ffd700 0%, #ff9800 100%)",
+              borderRadius: "14px",
+              boxShadow: "0 2px 16px #ffd70040",
+              padding: "24px 12px",
+              minWidth: "120px",
+              textAlign: "center",
+              position: "relative",
+              color: "#232946"
+            }}>
+              <Trophy size={32} className="mb-2" style={{ color: "#232946", filter: "drop-shadow(0 2px 8px #ffd70080)" }} />
+              <div style={{ fontSize: "2.2rem", fontWeight: "bold", marginBottom: "6px", letterSpacing: 1 }}>{users.length > 0 ? users[0]?.name || "N/A" : "N/A"}</div>
+              <div style={{ fontSize: "1rem", opacity: 0.85 }}>Current Leader</div>
+              <div style={{ position: "absolute", top: 8, right: 12, opacity: 0.18, fontSize: "2.5rem" }}>🏆</div>
             </div>
           </div>
+          {/* Animated Glow Border */}
+          <div style={{
+            position: "absolute",
+            inset: 0,
+            borderRadius: "18px",
+            pointerEvents: "none",
+            boxShadow: "0 0 32px 8px #ffd70060, 0 0 64px 16px #667eea40",
+            zIndex: 0,
+            animation: "glow 2.5s infinite alternate"
+          }} />
+          <style>{`
+            @keyframes glow {
+              from { box-shadow: 0 0 32px 8px #ffd70060, 0 0 64px 16px #667eea40; }
+              to { box-shadow: 0 0 48px 16px #ffd70090, 0 0 80px 24px #667eea80; }
+            }
+          `}</style>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="container mt-5">
-        <div className="text-center text-white" style={{ opacity: 0.8 }}>
-          <p>Built with React.js, Node.js, MongoDB & Socket.IO</p>
-          <p style={{ fontSize: "0.9rem" }}>
-            Real-time leaderboard system with dynamic rankings and point history
-            tracking
+      <footer className="container mt-5" style={{ marginBottom: 24 }}>
+        <div className="text-center" style={{ color: "#ffd700", opacity: 0.98, textShadow: "0 1px 6px #232946" }}>
+          <p style={{ fontWeight: "bold" }}>Built with React.js, Node.js, MongoDB & Socket.IO</p>
+          <p style={{ fontSize: "0.95rem", color: "#fff", opacity: 0.98 }}>
+            Real-time leaderboard system with dynamic rankings and point history tracking
           </p>
         </div>
       </footer>
